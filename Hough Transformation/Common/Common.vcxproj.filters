@@ -15,7 +15,12 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Hugh Transformation (Serial).cpp">
+    <ClInclude Include="ImageIO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ImageIO.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
