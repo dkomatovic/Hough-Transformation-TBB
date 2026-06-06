@@ -1,8 +1,6 @@
 #include "LineVisualization.h"
 #include <algorithm>
 
-using namespace std;
-
 void setPixel(Image& img, int x, int y, unsigned char r, unsigned char g, unsigned char b) {
     if (x < 0 || x >= img.width || y < 0 || y >= img.height) return;
     int idx = (y * img.width + x) * img.channels;
@@ -31,8 +29,8 @@ void drawLine(Image& img, int x0, int y0, int x1, int y1, unsigned char r, unsig
     }
 }
 
-vector<pair<int, int>> getLineEndpoints(double rho, double theta, int width, int height) {
-    vector<pair<int, int>> points;
+std::vector<std::pair<int, int>> getLineEndpoints(double rho, double theta, int width, int height) {
+    std::vector<std::pair<int, int>> points;
     double cos_t = cos(theta);
     double sin_t = sin(theta);
 
@@ -65,7 +63,7 @@ vector<pair<int, int>> getLineEndpoints(double rho, double theta, int width, int
     return {};
 }
 
-Image DrawLines(const Image& img, vector<Line> lines,
+Image DrawLines(const Image& img, std::vector<Line> lines,
     unsigned char r, unsigned char g, unsigned char b)
 {
     Image result = img;
@@ -82,7 +80,7 @@ Image DrawLines(const Image& img, vector<Line> lines,
             colorImg.data[i * 3 + 1] = result.data[i];
             colorImg.data[i * 3 + 2] = result.data[i];
         }
-        result = move(colorImg);
+        result = std::move(colorImg);
     }
 
     // Draw each line

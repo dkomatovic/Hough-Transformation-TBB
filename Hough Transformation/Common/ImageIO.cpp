@@ -8,12 +8,10 @@
 #include <filesystem>
 #include <stdexcept>
 
-
-using namespace std;
 namespace fs = std::filesystem;
 
-vector<fs::path> FindInputImages(const fs::path& inputFolder) {
-    vector<fs::path> imgPaths;
+std::vector<fs::path> FindInputImages(const fs::path& inputFolder) {
+    std::vector<fs::path> imgPaths;
 
     const std::vector<std::string> allowedExtensions = {
         ".bmp", ".png", ".ppm", ".jpg"
@@ -37,7 +35,7 @@ vector<fs::path> FindInputImages(const fs::path& inputFolder) {
     return imgPaths;
 }
 
-Image LoadImage(const fs::path& path) {
+Image LoadImageFromFile(const fs::path& path) {
     Image img;
     int width, height, channels;
     unsigned char* data = stbi_load(path.string().c_str(),
@@ -55,7 +53,7 @@ Image LoadImage(const fs::path& path) {
     return img;
 }
 
-void SaveImage(const Image& img, const std::string& filename) {
+void SaveImageToFile(const Image& img, const std::string& filename) {
     // Validation
     if (img.data.empty() || img.width == 0 || img.height == 0) {
         throw std::runtime_error("Cannot save empty image");

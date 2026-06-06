@@ -18,12 +18,12 @@
     <ClCompile Include="Serial.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ImageTransformator.cpp">
+    <ClCompile Include="SerialTransformation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ImageTransformator.h">
+    <ClInclude Include="SerialTransformation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -3,13 +3,13 @@
 #include <sstream>
 #include <fstream>
 
-string Report::Generate() {
+std::string Report::Generate() {
     std::ostringstream oss;
     oss << "========================================\n";
     oss << "HOUGH TRANSFORM ANALYSIS REPORT\n";
     oss << "========================================\n";
     oss << "Processing mode: " << processingMode << "\n";
-    oss << "Image title: " << imgTitle << endl;
+    oss << "Image title: " << imgTitle << "\n";
     oss << "Image dimensions: " << img.width << " x " << img.height << ", channels: " << (int)img.channels << "\n";
     oss << "Accumulator threshold: " << accumulatorThreshold << "\n\n";
     oss << "Timings (milliseconds):\n";
@@ -18,17 +18,17 @@ string Report::Generate() {
     oss << "  Hough transform: " << houghTransformationDuration << " ms\n";
     oss << "  Line detection: " << lineDetectionDuration << " ms\n";
     oss << "\n(along with loading, and saving)\nTotal duration: " << totalProcessingDuration << " ms\n";
-    oss << "\nNumber of lines detected: " << detectedLinesNum << endl;
+    oss << "\nNumber of lines detected: " << detectedLinesNum << "\n";
     oss << "========================================\n";
     return oss.str();
 }
 
 void Report::Print()
 {
-    cout << Generate();
+    std::cout << Generate();
 }
 
-void Report::Save(string path)
+void Report::Save(std::string path)
 {
     std::ofstream out(path);
     if (out.is_open()) {

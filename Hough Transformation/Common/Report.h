@@ -4,16 +4,15 @@
 #include <string>
 #include <filesystem>
 
-using namespace std;
 namespace fs = std::filesystem;
 
 class Report
 {
 private:
-	string Generate();
+	std::string Generate();
 public:
-	string processingMode;
-	string imgTitle;
+	std::string processingMode;
+	std::string imgTitle;
 	Image img;
 	long long grayscaleDuration;
 	long long edgeDetectionDuration;
@@ -24,6 +23,6 @@ public:
 	int detectedLinesNum;
 
 	void Print();
-	void Save(string path);
+	void Save(std::string path);
 };
 

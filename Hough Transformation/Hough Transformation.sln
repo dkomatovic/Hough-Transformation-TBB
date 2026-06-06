@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Serial", "Serial\Serial.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Common", "Common\Common.vcxproj", "{21DA7F9A-7C1B-498C-A940-F2DC8FD5935E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Parallel", "Parallel\Parallel.vcxproj", "{5F3EE874-CD75-4EA1-B77A-BB2CD60C0838}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +33,14 @@ Global
 		{21DA7F9A-7C1B-498C-A940-F2DC8FD5935E}.Release|x64.Build.0 = Release|x64
 		{21DA7F9A-7C1B-498C-A940-F2DC8FD5935E}.Release|x86.ActiveCfg = Release|Win32
 		{21DA7F9A-7C1B-498C-A940-F2DC8FD5935E}.Release|x86.Build.0 = Release|Win32
+		{5F3EE874-CD75-4EA1-B77A-BB2CD60C0838}.Debug|x64.ActiveCfg = Debug|x64
+		{5F3EE874-CD75-4EA1-B77A-BB2CD60C0838}.Debug|x64.Build.0 = Debug|x64
+		{5F3EE874-CD75-4EA1-B77A-BB2CD60C0838}.Debug|x86.ActiveCfg = Debug|Win32
+		{5F3EE874-CD75-4EA1-B77A-BB2CD60C0838}.Debug|x86.Build.0 = Debug|Win32
+		{5F3EE874-CD75-4EA1-B77A-BB2CD60C0838}.Release|x64.ActiveCfg = Release|x64
+		{5F3EE874-CD75-4EA1-B77A-BB2CD60C0838}.Release|x64.Build.0 = Release|x64
+		{5F3EE874-CD75-4EA1-B77A-BB2CD60C0838}.Release|x86.ActiveCfg = Release|Win32
+		{5F3EE874-CD75-4EA1-B77A-BB2CD60C0838}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

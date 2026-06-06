@@ -2,14 +2,13 @@
 #include "ImageIO.h"
 #include "Report.h"
 #include "LineVisualization.h"
-#include "ImageTransformation.h"
+#include "SerialTransformation.h"
 #include <vector>
 #include <chrono>
 
-using namespace std;
 namespace fs = std::filesystem;
 
-int GetAccumulatorThreshold(const vector<vector<int>>& accumulator) {
+int GetAccumulatorThreshold(const std::vector<std::vector<int>>& accumulator) {
     int maxVal = 0;
     for (const auto& row : accumulator)
         for (int v : row)
@@ -18,47 +17,47 @@ int GetAccumulatorThreshold(const vector<vector<int>>& accumulator) {
     return static_cast<int>(0.70 * maxVal);
 }
 
-void processImage(fs::path imgPath, string outputFolder) {
+void processImage(fs::path imgPath, std::string outputFolder) {
     
     // Starting total clock for report
     Report report;
     report.processingMode = "Serial";
-    auto totalStart = chrono::steady_clock::now();
+    auto totalStart = std::chrono::steady_clock::now();
 
     // loading image
-    Image img = LoadImage(imgPath);
+    Image img = LoadImageFromFile(imgPath);
     report.img = img;
     report.imgTitle = imgPath.stem().string();
 
     // grayscale phase
-    auto start = chrono::steady_clock::now();
+    auto start = std::chrono::steady_clock::now();
     Image grayImg = Grayscale(img);
-    auto end = chrono::steady_clock::now();
-    auto duration = chrono::duration_cast<chrono::milliseconds>(end - start).count();
+    auto end = std::chrono::steady_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
     report.grayscaleDuration = duration;
 
     // edge detection phase
-    start = chrono::steady_clock::now();
-    Image edgesImg = SobelEdgeDetection(grayImg);
-    end = chrono::steady_clock::now();
-    duration = chrono::duration_cast<chrono::milliseconds>(end - start).count();
+    start = std::chrono::steady_clock::now();
+    Image edgesImg = SobelEdgeDetection(grayImg, 100);
+    end = std::chrono::steady_clock::now();
+    duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
     report.edgeDetectionDuration = duration;
 
     // hough transformation phase
-    start = chrono::steady_clock::now();
+    start = std::chrono::steady_clock::now();
     auto accumulator = HoughTransform(edgesImg);
-    end = chrono::steady_clock::now();
-    duration = chrono::duration_cast<chrono::milliseconds>(end - start).count();
+    end = std::chrono::steady_clock::now();
+    duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
     report.houghTransformationDuration = duration;
 
     // line detecting phase
     int threshold = GetAccumulatorThreshold(accumulator);
     report.accumulatorThreshold = threshold;
 
-    start = chrono::steady_clock::now();
+    start = std::chrono::steady_clock::now();
     auto lines = DetectLines(accumulator, threshold);
-    end = chrono::steady_clock::now();
-    duration = chrono::duration_cast<chrono::milliseconds>(end - start).count();
+    end = std::chrono::steady_clock::now();
+    duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
     report.lineDetectionDuration = duration;
     report.detectedLinesNum = lines.size();
 
@@ -66,61 +65,62 @@ void processImage(fs::path imgPath, string outputFolder) {
     Image imgWithLines = DrawLines(img, lines, 170, 0, 0);
 
     // Saving results to output folder
-    string resultFolder = outputFolder + "/" + imgPath.stem().string();
-    SaveImage(grayImg, resultFolder + "/gray_" + imgPath.stem().string());
-    SaveImage(edgesImg, resultFolder + "/edge_" + imgPath.stem().string());
-    SaveImage(imgWithLines, resultFolder + "/final_" + imgPath.stem().string());
-    auto totalEnd = chrono::steady_clock::now();
-    auto totalDuration = chrono::duration_cast<chrono::milliseconds>(totalEnd - totalStart).count();
+    std::string resultFolder = outputFolder + "/" + imgPath.stem().string();
+    SaveImageToFile(grayImg, resultFolder + "/gray_" + imgPath.stem().string());
+    SaveImageToFile(edgesImg, resultFolder + "/edge_" + imgPath.stem().string());
+    SaveImageToFile(imgWithLines, resultFolder + "/final_" + imgPath.stem().string());
+    auto totalEnd = std::chrono::steady_clock::now();
+    auto totalDuration = std::chrono::duration_cast<std::chrono::milliseconds>(totalEnd - totalStart).count();
     report.totalProcessingDuration = totalDuration;
 
     report.Print();
     report.Save(resultFolder + "/report.txt");
-    // dodaj tekstualni fajl za prikaz
 }
 
 
 int main()
 {
-    string inputDir = "../Input";
-    string outputDir = "../OutputSerial";
-    vector<fs::path> imgPaths = FindInputImages(inputDir);
+    std::cout << "HOUGH TRANSFORMATION (SERIAL)\n";
+
+    std::string inputDir = "../Input";
+    std::string outputDir = "../OutputSerial";
+    std::vector<fs::path> imgPaths = FindInputImages(inputDir);
 
     if (imgPaths.size() == 0) {
-        cout << "No images found in the Input folder" << endl;
+        std::cout << "No images found in the Input folder\n";
         return 0;
     }
 
     try {
-        cout << "Choose the index of the image you would like to process: " << endl;
+        std::cout << "Choose the index of the image you would like to process: \n";
         for (size_t i = 0; i < imgPaths.size(); i++)
-            cout << "[" << i << "] " << imgPaths[i].stem().string() << endl;
+            std::cout << "[" << i << "] " << imgPaths[i].stem().string() << "\n";
 
         int index;
         fs::path chosenImgPath;
         while (true) {
             try {
-                cout << "Index: ";
-                cin >> index;
+                std::cout << "Index: ";
+                std::cin >> index;
 
-                if (cin.fail() || index < 0 || index >= static_cast<int>(imgPaths.size())) {
-                    cin.clear();  
-                    cin.ignore(std::numeric_limits<streamsize>::max(), '\n'); 
-                    cout << "Invalid index. Please enter a number between 0 and " << imgPaths.size() - 1 << std::endl;
+                if (std::cin.fail() || index < 0 || index >= static_cast<int>(imgPaths.size())) {
+                    std::cin.clear();
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                    std::cout << "Invalid index. Please enter a number between 0 and " << imgPaths.size() - 1 << std::endl;
                 }
                 else {
                     chosenImgPath = imgPaths[index];
                     break;
                 }
             }
-            catch (exception e) {
-                cout << "Invalid index. Try again" << endl;
+            catch (std::exception e) {
+                std::cout << "Invalid index. Try again" << std::endl;
             }
         }
 
         processImage(chosenImgPath, outputDir);
     }
-    catch (exception e) {
-        cout << e.what() << endl;
+    catch (std::exception e) {
+        std::cout << e.what() << "\n";
     }
 }

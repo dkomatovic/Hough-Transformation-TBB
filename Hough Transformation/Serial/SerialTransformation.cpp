@@ -1,6 +1,6 @@
 #define _USE_MATH_DEFINES
 
-#include "ImageTransformation.h"
+#include "SerialTransformation.h"
 #include <cmath>
 #include <algorithm>
 #include <stdexcept>
@@ -34,7 +34,7 @@ Image Grayscale(const Image& img) {
 }
 
 
-Image SobelEdgeDetection(const Image& grayImage, int threshold) {
+Image SobelEdgeDetection(const Image& grayImage, int threshold=100) {
     // Check to see if the image has only one channel (grayscale)
     if (grayImage.channels != 1) {
         throw std::runtime_error("Sobel edge detection requires grayscale image (channels=1)");
@@ -73,10 +73,10 @@ Image SobelEdgeDetection(const Image& grayImage, int threshold) {
     return edgeImage;
 }
 
-vector<vector<int>> HoughTransform(const Image& edgeImage)
+std::vector<std::vector<int>> HoughTransform(const Image& edgeImage)
 {
     if (edgeImage.channels != 1)
-        throw runtime_error("Hough transformation requires an image with one channel pixels");
+        throw std::runtime_error("Hough transformation requires an image with one channel pixels");
 
     int w = edgeImage.width;
     int h = edgeImage.height;
@@ -113,7 +113,7 @@ vector<vector<int>> HoughTransform(const Image& edgeImage)
     return accumulator; 
 }
 
-vector<Line> DetectLines(const vector<vector<int>>& accumulator, int threshold)
+std::vector<Line> DetectLines(const std::vector<std::vector<int>>& accumulator, int threshold)
 {
     std::vector<Line> lines;
     if (accumulator.empty()) return lines;

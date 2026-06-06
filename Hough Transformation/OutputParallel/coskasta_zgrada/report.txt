@@ -1,19 +1,19 @@
 ========================================
 HOUGH TRANSFORM ANALYSIS REPORT
 ========================================
-Processing mode: Serial
+Processing mode: Parallel
 Image title: coskasta_zgrada
 Image dimensions: 890 x 844, channels: 3
 Accumulator threshold: 396
 
 Timings (milliseconds):
-  Grayscale: 19 ms
-  Edge detection: 74 ms
-  Hough transform: 1315 ms
-  Line detection: 4 ms
+  Grayscale: 7 ms
+  Edge detection: 19 ms
+  Hough transform: 292 ms
+  Line detection: 1 ms
 
 (along with loading, and saving)
-Total duration: 2135 ms
+Total duration: 1052 ms
 
 Number of lines detected: 187
 ========================================
