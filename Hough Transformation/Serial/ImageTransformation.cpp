@@ -2,6 +2,8 @@
 
 #include "ImageTransformation.h"
 #include <cmath>
+#include <algorithm>
+#include <stdexcept>
 
 Image Grayscale(const Image& img) {
     if (img.channels != 3 && img.channels != 4) {
@@ -31,9 +33,6 @@ Image Grayscale(const Image& img) {
     return output;
 }
 
-#include <cmath>
-#include <algorithm>
-#include <stdexcept>
 
 Image SobelEdgeDetection(const Image& grayImage, int threshold) {
     // Check to see if the image has only one channel (grayscale)
@@ -95,7 +94,7 @@ vector<vector<int>> HoughTransform(const Image& edgeImage)
     for (int y = 0; y < h; ++y) {
         for (int x = 0; x < w; ++x) {
             unsigned char pixel = edgeImage.data[y * w + x];
-            if (pixel == 0) continue; // nije ivica
+            if (pixel == 0) continue; // not edge
 
             for (int t_idx = 0; t_idx < theta_bins; ++t_idx) {
                 double theta_deg = t_idx;          // 0..179 degrees
@@ -121,17 +120,17 @@ vector<Line> DetectLines(const vector<vector<int>>& accumulator, int threshold)
 
     int rho_bins = accumulator.size();
     int theta_bins = accumulator[0].size();
-    int rho_max = (rho_bins - 1) / 2;   // pošto rho_idx = rho + rho_max
+    int rho_max = (rho_bins - 1) / 2;   //  rho_idx = rho + rho_max
 
-    const double theta_step = M_PI / theta_bins; // radijani po bin-u (180° -> π rad)
+    const double theta_step = M_PI / theta_bins; 
 
-    // Prolaz kroz sve ćelije akumulatora (preskačemo ivice radi jednostavnije provere)
+    // Pass through all cells of the accumulator 
     for (int r = 1; r < rho_bins - 1; ++r) {
         for (int t = 1; t < theta_bins - 1; ++t) {
             int value = accumulator[r][t];
             if (value < threshold) continue;
 
-            // Provera da li je lokalni maksimum (poređenje sa 8 suseda)
+            // Check if local max (compare with 8 neighboors)
             bool is_max = true;
             for (int dr = -1; dr <= 1; ++dr) {
                 for (int dt = -1; dt <= 1; ++dt) {
@@ -145,8 +144,8 @@ vector<Line> DetectLines(const vector<vector<int>>& accumulator, int threshold)
             }
 
             if (is_max) {
-                double rho = r - rho_max;          // stvarno ρ
-                double theta = t * theta_step;     // u radijanima
+                double rho = r - rho_max;          
+                double theta = t * theta_step;     
                 lines.push_back({ rho, theta });
             }
         }
@@ -155,106 +154,3 @@ vector<Line> DetectLines(const vector<vector<int>>& accumulator, int threshold)
     return lines;
 }
 
-void setPixel(Image& img, int x, int y, unsigned char r, unsigned char g, unsigned char b) {
-    if (x < 0 || x >= img.width || y < 0 || y >= img.height) return;
-    int idx = (y * img.width + x) * img.channels;
-    if (img.channels == 3) {
-        img.data[idx] = r;
-        img.data[idx + 1] = g;
-        img.data[idx + 2] = b;
-    }
-    else if (img.channels == 1) {
-        // Ako crtamo na grayscale, pretvori boju u sivu nijansu
-        unsigned char gray = (unsigned char)(0.299 * r + 0.587 * g + 0.114 * b);
-        img.data[idx] = gray;
-    }
-    // za channels 4 (RGBA) – možeš dodati Alpha = 255
-}
-
-void drawLine(Image& img, int x0, int y0, int x1, int y1, unsigned char r, unsigned char g, unsigned char b) {
-    int dx = abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
-    int dy = -abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
-    int err = dx + dy, e2;
-    while (true) {
-        setPixel(img, x0, y0, r, g, b);
-        if (x0 == x1 && y0 == y1) break;
-        e2 = 2 * err;
-        if (e2 >= dy) { err += dy; x0 += sx; }
-        if (e2 <= dx) { err += dx; y0 += sy; }
-    }
-}
-
-std::vector<std::pair<int, int>> getLineEndpoints(double rho, double theta, int width, int height) {
-    std::vector<std::pair<int, int>> points;
-    double cos_t = cos(theta);
-    double sin_t = sin(theta);
-
-    // Presek sa y = 0
-    if (fabs(sin_t) > 1e-6) {
-        int x = (int)round((rho - 0 * sin_t) / cos_t);
-        if (x >= 0 && x < width) points.emplace_back(x, 0);
-    }
-    // Presek sa y = height-1
-    if (fabs(sin_t) > 1e-6) {
-        int x = (int)round((rho - (height - 1) * sin_t) / cos_t);
-        if (x >= 0 && x < width) points.emplace_back(x, height - 1);
-    }
-    // Presek sa x = 0
-    if (fabs(cos_t) > 1e-6) {
-        int y = (int)round((rho - 0 * cos_t) / sin_t);
-        if (y >= 0 && y < height) points.emplace_back(0, y);
-    }
-    // Presek sa x = width-1
-    if (fabs(cos_t) > 1e-6) {
-        int y = (int)round((rho - (width - 1) * cos_t) / sin_t);
-        if (y >= 0 && y < height) points.emplace_back(width - 1, y);
-    }
-
-    // Ukloni duplikate i vrati dve tačke (ako postoje)
-    if (points.size() < 2) return {};
-    // Sortiraj i ukloni duplikate (iste tačke)
-    std::sort(points.begin(), points.end());
-    points.erase(std::unique(points.begin(), points.end()), points.end());
-    if (points.size() >= 2) return { points[0], points[1] };
-    return {};
-}
-
-Image DrawLines(const Image& img, std::vector<Line> lines,
-    unsigned char r, unsigned char g, unsigned char b)
-{
-    // Kreiraj radnu kopiju slike
-    Image result = img;
-
-    // Ako je izvorna slika grayscale, pretvori je u RGB (3 kanala)
-    if (result.channels == 1) {
-        Image colorImg;
-        colorImg.width = result.width;
-        colorImg.height = result.height;
-        colorImg.channels = 3;
-        colorImg.data.resize(result.width * result.height * 3);
-        for (size_t i = 0; i < result.data.size(); ++i) {
-            colorImg.data[i * 3] = result.data[i];
-            colorImg.data[i * 3 + 1] = result.data[i];
-            colorImg.data[i * 3 + 2] = result.data[i];
-        }
-        result = std::move(colorImg);
-    }
-
-    // Provera (opciono)
-    if (result.channels < 3) {
-        throw std::runtime_error("Image must have 1 or 3 channels to draw lines");
-    }
-
-    // Crtanje svake linije
-    for (const auto& line : lines) {
-        auto endpoints = getLineEndpoints(line.rho, line.theta, result.width, result.height);
-        if (endpoints.size() >= 2) {
-            drawLine(result,
-                endpoints[0].first, endpoints[0].second,
-                endpoints[1].first, endpoints[1].second,
-                r, g, b);
-        }
-    }
-
-    return result;
-}

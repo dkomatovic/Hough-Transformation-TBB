@@ -20,10 +20,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ImageIO.h" />
+    <ClInclude Include="LineVisualization.h" />
+    <ClInclude Include="Report.h" />
     <ClInclude Include="Structures.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ImageIO.cpp" />
+    <ClCompile Include="LineVisualization.cpp" />
+    <ClCompile Include="Report.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
