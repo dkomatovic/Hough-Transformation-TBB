@@ -2,16 +2,11 @@
 
 #include <vector>
 #include <filesystem>
+#include "Structures.h"
 
 using namespace std;
 namespace fs = std::filesystem;
 
-struct Image {
-    int width = 0;
-    int height = 0;
-    int channels = 0;
-    std::vector<unsigned char> data;
-};
 
 vector<fs::path> FindInputImages(const fs::path& inputFolder);
 Image LoadImage(const fs::path& path);
