@@ -34,7 +34,7 @@ Image Grayscale(const Image& img) {
 }
 
 
-Image SobelEdgeDetection(const Image& grayImage, int threshold=100) {
+Image SobelEdgeDetection(const Image& grayImage, int threshold) {
     // Check to see if the image has only one channel (grayscale)
     if (grayImage.channels != 1) {
         throw std::runtime_error("Sobel edge detection requires grayscale image (channels=1)");

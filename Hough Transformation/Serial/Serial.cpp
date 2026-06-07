@@ -8,11 +8,19 @@
 
 namespace fs = std::filesystem;
 
-int GetAccumulatorThreshold(const std::vector<std::vector<int>>& accumulator) {
+int ProcessAccumulatorAndGetThreshold(const std::vector<std::vector<int>>& accumulator, Report& report) {
     int maxVal = 0;
     for (const auto& row : accumulator)
         for (int v : row)
             if (v > maxVal) maxVal = v;
+
+    std::vector<int> hist(maxVal + 1, 0);
+    for (const auto& row : accumulator)
+        for (int v : row)
+            hist[v]++;
+
+    report.maxAccumulatorVote = maxVal;
+    report.accumulatorHistogram = hist;
 
     return static_cast<int>(0.70 * maxVal);
 }
@@ -51,7 +59,7 @@ void processImage(fs::path imgPath, std::string outputFolder) {
     report.houghTransformationDuration = duration;
 
     // line detecting phase
-    int threshold = GetAccumulatorThreshold(accumulator);
+    int threshold = ProcessAccumulatorAndGetThreshold(accumulator, report);
     report.accumulatorThreshold = threshold;
 
     start = std::chrono::steady_clock::now();
@@ -75,6 +83,7 @@ void processImage(fs::path imgPath, std::string outputFolder) {
 
     report.Print();
     report.Save(resultFolder + "/report.txt");
+    report.SaveHistogram(resultFolder + "/histogram.png");
 }
 
 

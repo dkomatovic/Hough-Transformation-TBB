@@ -7,13 +7,13 @@ Image dimensions: 890 x 844, channels: 3
 Accumulator threshold: 396
 
 Timings (milliseconds):
-  Grayscale: 7 ms
+  Grayscale: 12 ms
   Edge detection: 19 ms
-  Hough transform: 292 ms
+  Hough transform: 294 ms
   Line detection: 1 ms
 
 (along with loading, and saving)
-Total duration: 1052 ms
+Total duration: 1064 ms
 
 Number of lines detected: 187
 ========================================

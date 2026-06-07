@@ -20,9 +20,13 @@ public:
 	long long lineDetectionDuration; 
 	long long totalProcessingDuration;
 	int accumulatorThreshold;
+	std::vector<int> accumulatorHistogram;
+	int maxAccumulatorVote;
 	int detectedLinesNum;
+
 
 	void Print();
 	void Save(std::string path);
+	void SaveHistogram(std::string path);
 };
 

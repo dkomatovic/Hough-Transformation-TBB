@@ -12,4 +12,5 @@ struct Image {
 struct Line {
     double rho;
     double theta;
+    int votesNum;
 };
